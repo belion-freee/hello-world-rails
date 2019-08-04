@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-8 offset-md-2">
-  <%= form_with(model: hello_world, local: true) do |form| %>
-    <%= render "share/errors", model: hello_world %>
+  <%= form_with(model: @hello_world, local: true) do |form| %>
+    <%= render "share/errors", model: @hello_world %>
   </div>
 </div>
   <div class="container py-5">
@@ -13,7 +13,7 @@
               <!-- form user info -->
               <div class="card card-outline-secondary">
                   <div class="card-header">
-                      <h3 class="mb-0">Edit Helloworld</h3>
+                      <h3 class="mb-0"><%= title %> Helloworld</h3>
                   </div>
                   <div class="card-body">
                       <form class="form" role="form">
@@ -42,7 +42,7 @@
                               <div class="custom-file">
                                 <%= form.file_field :image, class: "custom-file-input", id: "customFile" %>
                                 <label class="form-control custom-file-label" for="customFile" id="customFileLabel">
-                                  <%= hello_world.image.present? ? hello_world.image.file.filename : "ファイルを選択してください" %>
+                                  <%= @hello_world.image.present? ? @hello_world.image.file.filename : "ファイルを選択してください" %>
                                 </label>
                               </div>
                             </div>
@@ -50,7 +50,7 @@
                           <div class="form-group row">
                               <label class="col-lg-3 col-form-label form-control-label"></label>
                               <div class="col-lg-9">
-                                  <%= link_to "Back", hello_worlds_path, class: "btn btn-secondary" %>
+                                  <%= link_to "Back", @hello_worlds_path, class: "btn btn-secondary" %>
                                   <%= form.submit "Submit", class: "btn btn-primary" %>
                               </div>
                           </div>

@@ -6,7 +6,7 @@
   <h2><%= export_csv(hello_worlds_path) %></h2>
 </div>
 
-<div class="row animated bounceInLeft delay-1s">
+<div id="hello_world_contents"  class="row animated bounceInLeft delay-1s">
   <% @hello_worlds.each do |hello_world| %>
   <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
     <div class="card h-100">
@@ -16,10 +16,10 @@
           <%= link_to c(hello_world), hello_world %>
         </h4>
         <p class="card-text"><%= hello_world.hello %></p>
-        <%= link_to edit_hello_world_path(hello_world), class: "no-underline pr-2" do %>
+        <%= link_to edit_hello_world_path(hello_world), class: "no-underline pr-2", id: "edit_#{hello_world.id}" do %>
           <%= i :edit %>
         <% end %>
-        <%= link_to "#", method: :delete, data: { url: hello_worlds_path(hello_world), confirm: 'Are you sure?' }, class: "no-underline" do %>
+        <%= link_to "#", method: :delete, data: { url: hello_world_path(hello_world), confirm: 'Are you sure?' }, class: "no-underline", id: "delete_#{hello_world.id}" do %>
           <%= i :delete %>
         <% end %>
       </div>

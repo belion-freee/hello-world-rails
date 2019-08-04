@@ -23,7 +23,6 @@ services:
     volumes:
       - .:/app:cached
       - bundle:/usr/local/bundle:cached
-      - /app/tmp
       - /app/log
       - /app/.git
     environment:
@@ -34,6 +33,7 @@ services:
     tty: true
     links:
       - db
+      - chrome
   spring:
     <<: *app
     command: bundle exec spring server
