@@ -1,4 +1,5 @@
 require "rails_helper"
+require "helpers/mock_helper"
 
 RSpec.describe "Statics", type: :request do
   describe "Show static page" do
