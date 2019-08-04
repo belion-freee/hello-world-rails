@@ -15,8 +15,6 @@ app="web" # describe $application service name from docker-compose.yml
 
 db="db" # describe database service name from docker-compose.yml
 
-front="webpack" # describe webpacker service name from docker-compose.yml
-
 app_name=`pwd | awk -F "/" '{ print $NF }'` # get project dir name
 
 # define container name
@@ -38,10 +36,40 @@ rm_pids() {
 
 create_project() {
   echoing "Exec Bundle Install for executing rails new command"
+  # set options
+  test_option=" -T"
+  front_option=""
+  db_option="postgresql"
+  for arg in $@
+    do
+      case $arg in
+        "test=true") test_option="" ;;
+        "webpack=true") front_option=" --webpack" ;;
+        "db=mysql") db_option="mysql" ;;
+        *) ;;
+      esac
+    done
+
+  echo "front option setting by$front_option"
+  echo "test option setting by$test_option"
+  echo "db option setting by $db_option"
+
+  d_row_num="12,19d"
+  dc_row_num="9,15d"
+  if [ "mysql" == "$db_option" ]; then
+    d_row_num="2,11d"
+    dc_row_num="4,8d"
+  fi
+
+  # edit yml files
+  sed -i '' -e $d_row_num database.yml
+  sed -i '' -e $dc_row_num docker-compose.yml
+
+  echoing "Exec Bundle Install for executing rails new command"
   bundle_cmd install
 
   echoing "Exec rails new with postgresql and webpack"
-  bundle_exec rails new . -f -M -C -S -T --skip-spring --skip-turbolinks --skip-coffee --webpack -d=postgresql
+  bundle_exec rails new . -f -d=$db_option$front_option$test_option
 
   echoing "Update config/database.yml"
   mv database.default.yml config/database.yml
@@ -50,23 +78,28 @@ create_project() {
   bundle_exec rails db:create
 
   echoing "docker-compose up"
-  $dc up -d
+  compose_up $app
 
   echo "You can access to localhost:3000"
 }
 
 init_services() {
     echoing "Building containers"
-    $dc build --no-cache
+    $dc down -v
+    $dc build --no-cache $app
 
     bundle_cmd install
-    run_yarn install
+
+    if [ "--webpack" == "$1" ]; then
+      run_yarn install
+    fi
+
     rails_cmd db:migrate:reset
     rails_cmd db:seed
 
     rm_pids
 
-    $dc up
+    $dc up $app
 }
 
 compose_up() {
@@ -141,8 +174,12 @@ run_db() {
     invoke_run $db $*
 }
 
-run_front() {
-    invoke_run $front $*
+run_spring() {
+    $dc exec spring $*
+}
+
+run_solargraph() {
+    invoke_run solargraph $*
 }
 
 rails_server() {
@@ -157,6 +194,50 @@ rails_server() {
     $dc run $rm ${renv}--service-ports $app rails s -p 3000 -b 0.0.0.0
 }
 
+rails_db() {
+    case "$1" in
+      set)
+        rails_cmd db:migrate
+        ;;
+      up)
+        rails_cmd db:migrate:up VERSION="$2"
+        ;;
+      down)
+        rails_cmd db:migrate:down VERSION="$2"
+        ;;
+      reset)
+        rails_cmd db:reset
+        ;;
+      *)
+        rails_cmd db:migrate:status
+        ;;
+    esac
+}
+
+spring_db() {
+    case "$1" in
+      set)
+        spring_cmd rake db:migrate
+        ;;
+      up)
+        spring_cmd rake db:migrate:up VERSION="$2"
+        ;;
+      down)
+        spring_cmd rake db:migrate:down VERSION="$2"
+        ;;
+      reset)
+        spring_cmd rake db:reset
+        ;;
+      *)
+        spring_cmd rake db:migrate:status
+        ;;
+    esac
+}
+
+spring_dive() {
+  $dc exec spring bash
+}
+
 rails_cmd() {
     bundle_exec rails $*
 }
@@ -167,6 +248,10 @@ rake_cmd() {
 
 rspec_cmd() {
     bundle_exec rspec $*
+}
+
+test_cmd() {
+    bundle_exec test $*
 }
 
 bundle_cmd() {
@@ -183,6 +268,14 @@ rubocop_cmd() {
 
 rails_console() {
     bundle_exec rails c $*
+}
+
+spring_cmd() {
+    run_spring spring $*
+}
+
+solargraph_cmd() {
+    run_solargraph solargraph $*
 }
 
 rake_reset_db() {
@@ -219,25 +312,25 @@ db_dump() {
 }
 
 run_yarn() {
-    run_front bin/yarn $*
+    run_app bin/yarn $*
 }
 
 run_npm() {
-  run_front npm $*
+  run_app npm $*
 }
 
 run_webpack() {
-  run_front webpack $*
+  run_app webpack $*
 }
 
 cmd=$1
 shift
 case "$cmd" in
     setup)
-        create_project && exit 0
+        create_project $* && exit 0
         ;;
     init)
-        init_services && exit 0
+        init_services $* && exit 0
         ;;
     ps)
         compose_ps && exit 0
@@ -275,6 +368,9 @@ case "$cmd" in
     rails)
         rails_cmd $*
         ;;
+    db)
+        rails_db $*
+        ;;
     cons)
         rails_console $*
         ;;
@@ -283,6 +379,9 @@ case "$cmd" in
         ;;
     rspec)
         rspec_cmd $*
+        ;;
+    test)
+        test_cmd $*
         ;;
     bundle)
         bundle_cmd $*
@@ -308,6 +407,18 @@ case "$cmd" in
     webpack)
         run_webpack $*
         ;;
+    spring)
+        spring_cmd $*
+        ;;
+    sdb)
+        spring_db $*
+        ;;
+    sdive)
+        spring_dive $*
+        ;;
+    solargraph)
+        solargraph_cmd $*
+        ;;
     *)
         read -d '' help <<-EOF
 Usage: $0 command
@@ -328,15 +439,27 @@ App:
   server   Run rails server
   rails    [args] Run rails command in application container
   rake     [args] Run rake command in application container
+  db       [args] Run rails db command you can use set(migrate), up, down, reset, other is status
+           ex: ./qs db set #running rails db:migrate
+               ./qs db up 2019010101 #running rails db:migrate:up VERSION=2019010101
   rspec    [args] Run rspec command in application container
+  test     [args] Run Minitest command in application container
   bundle   [args] Run bundle command in application container
   cons     Run rails console
   rubocop  [args] Run rubocop
+  yarn      Run yarn command in application container
+  npm       Run npm  command in application container
+  webpack   Run webpack  command in application container
 
-Frontend
-  yarn      Run yarn command in Frontend container
-  npm       Run npm  command in Frontend container
-  webpack   Run webpack  command in Frontend container
+Spring
+  spring    Exec spring command in Spring container
+  sdive     Into spring container
+  sdb       [args] Run rails db command you can use set(migrate), up, down, reset, other is status
+             ex: ./qs db set #running rails db:migrate
+                 ./qs db up 2019010101 #running rails db:migrate:up VERSION=2019010101
+
+Solargraph
+  solargraph Run solargraph command in Spring container
 
 DB:
   reset-db  reset database in DB container
