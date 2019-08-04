@@ -29,6 +29,7 @@ $(() => {
             method: "DELETE",
             headers: {
               'content-type': 'application/json',
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
             }
           }).then(() => {
             swal(
