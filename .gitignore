@@ -22,6 +22,8 @@
 /public/assets
 .byebug_history
 .bash_history
+.npm/
+.config/
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
