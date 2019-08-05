@@ -11,17 +11,17 @@ Please refer to [Wiki](https://github.com/belion-freee/hello-world-rails/wiki/De
 There are includeing such tool and function, liblary.
 
 - [Rspec](http://rspec.info/)
+- [Capybara](https://github.com/teamcapybara/capybara)
+- [Selenium](https://github.com/SeleniumHQ/selenium)
 - [Bootstrap4](https://getbootstrap.com/)
 - [Webpacker](https://github.com/rails/webpacker)
 - [PostgerSQL](https://www.postgresql.org/)
 - [JQuery](https://jquery.com/)
 - [Animate.css](https://daneden.github.io/animate.css/)
-- [sweetalert2](https://sweetalert2.github.io/)
-- [chart.js](https://www.chartjs.org/)
-- [webmock](https://github.com/bblimke/webmock)
-- Api Accessor
-- CSV exporter
-- Mock test
+- [Sweetalert2](https://sweetalert2.github.io/)
+- [Chart.js](https://www.chartjs.org/)
+- [Webmock](https://github.com/bblimke/webmock)
+- [Babaloa](https://github.com/belion-freee/babaloa)
 
 ## Install Docker
 Please install Docker on your PC first.
