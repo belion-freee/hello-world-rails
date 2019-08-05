@@ -1,4 +1,12 @@
 module SystemSupport
+  def timestamp!(timestamp = Time.now.to_i)
+    @timestamp = timestamp
+  end
+
+  def timestamp
+    @timestamp
+  end
+
   # give me block return boolean
   def wait_until(wait_time = Capybara.default_max_wait_time)
     Timeout.timeout(wait_time) do
