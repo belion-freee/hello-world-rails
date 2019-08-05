@@ -33,6 +33,7 @@ group :development, :test do
   gem "webmock"
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'rspec-retry'
 end
 
 group :development do
