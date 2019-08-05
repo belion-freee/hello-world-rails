@@ -74,6 +74,14 @@ RSpec.configure do |config|
     end
   end
 
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+  config.default_retry_count = 3
+
+  config.before(:all, type: :system) do
+    timestamp!
+  end
+
   # Capybara setting
   config.before(:each, type: :system) do
     driven_by Capybara.default_driver

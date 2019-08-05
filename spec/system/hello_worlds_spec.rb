@@ -33,79 +33,72 @@ RSpec.describe "HelloWorlds", type: :system, js: true do
     end
   end
 
-  context "when go to Create page" do
+  context "when create update delete" do
     after {
-      HelloWorld.find_by(country: "DE").try(:destroy)
+      HelloWorld.where("hello like '%#{timestamp}%' ").try(:delete_all)
     }
-    it "create content" do
-      page.first("#new_hello_world").click
-      wait_until { page.has_css?("h3", text: "New Helloworld") }
+    context "when go to Create page" do
+      it "create content" do
+        page.first("#new_hello_world").click
+        wait_until { page.has_css?("h3", text: "New Helloworld") }
 
-      # input form
-      select "ドイツ", from: "hello_world_country"
-      fill_in "hello_world_hello", with: "Hallo Welt"
-      fill_in "hello_world_priority", with: 4
+        # input form
+        select "ドイツ", from: "hello_world_country"
+        fill_in "hello_world_hello", with: "Hallo Welt #{timestamp}"
+        fill_in "hello_world_priority", with: 4
 
-      click_on "Submit"
+        click_on "Submit"
 
-      wait_until { page.has_content?("Hello world was successfully created.") }
+        wait_until { page.has_content?("Hello world was successfully created.") }
 
-      content = page.first("div.form").all("label.form-control")
-      expect(content[0].text).to eq("ドイツ")
-      expect(content[1].text).to eq("Hallo Welt")
-      expect(content[2].text).to eq("4")
+        content = page.first("div.form").all("label.form-control")
+        expect(content[0].text).to eq("ドイツ")
+        expect(content[1].text).to eq("Hallo Welt #{timestamp}")
+        expect(content[2].text).to eq("4")
+      end
     end
-  end
 
-  context "when go to Edit page" do
-    let!(:content) { create(:hello_world, country: "DE", hello: "Hallo Welt", priority: 4) }
-    before(:each) {
-      visit root_path
-      wait_until { (page.all("div.portfolio-item").count == 4) }
-    }
-    after {
-      HelloWorld.find_by(country: "DE").try(:destroy)
-    }
-    it "edit content" do
-      wait_until {
-        sleep 0.1 # すげえ不本意
-        page.has_css?("a#edit_#{content.id}")
+    context "when go to Edit page" do
+      let!(:hr) { create(:hello_world, country: "DE", hello: "Hallo Welt Edit #{timestamp}", priority: 4) }
+      before(:each) {
+        visit root_path
+        wait_until { (page.all("div.portfolio-item").count == 4) }
       }
-      page.first("a#edit_#{content.id}").click
-      wait_until { page.has_css?("h3", text: "Edit Helloworld") }
+      it "edit content" do
+        wait_until { page.has_css?("a#edit_#{hr.id}") }
+        page.first("a#edit_#{hr.id}").click
+        wait_until { page.has_css?("h3", text: "Edit Helloworld") }
 
-      # input form
-      fill_in "hello_world_hello", with: "Update Hallo Welt"
+        # input form
+        fill_in "hello_world_hello", with: "Update Hallo Welt #{timestamp}"
 
-      click_on "Submit"
+        click_on "Submit"
 
-      wait_until { page.has_content?("Hello world was successfully updated.") }
+        wait_until { page.has_content?("Hello world was successfully updated.") }
 
-      content = page.first("div.form").all("label.form-control")
-      expect(content[0].text).to eq("ドイツ")
-      expect(content[1].text).to eq("Update Hallo Welt")
-      expect(content[2].text).to eq("4")
+        content = page.first("div.form").all("label.form-control")
+        expect(content[0].text).to eq("ドイツ")
+        expect(content[1].text).to eq("Update Hallo Welt #{timestamp}")
+        expect(content[2].text).to eq("4")
+      end
     end
-  end
 
-  context "when exec Delete" do
-    let!(:content) { create(:hello_world, country: "DE", hello: "Hallo Welt", priority: 4) }
-    before(:each) {
-      visit root_path
-      wait_until { (page.all("div.portfolio-item").count == 4) }
-    }
-    it "edit content" do
-      wait_until {
-        sleep 0.1 # すげえ不本意
-        page.has_css?("a#delete_#{content.id}")
+    context "when exec Delete" do
+      let!(:hr) { create(:hello_world, country: "DE", hello: "Hallo Welt Delete #{timestamp}", priority: 4) }
+      before(:each) {
+        visit root_path
+        wait_until { (page.all("div.portfolio-item").count == 4) }
       }
-      page.first("a#delete_#{content.id}").click
-      wait_until { page.has_css?("h2#swal2-title", text: "Delete Content") }
-      click_on "Sure"
-      wait_until { page.has_css?("h2#swal2-title", text: "Deleted successfully!") }
-      click_on "OK"
+      it "edit content", retry: 5 do
+        wait_until { page.has_css?("a#delete_#{hr.id}") }
+        page.first("a#delete_#{hr.id}").click
+        wait_until { page.has_css?("h2#swal2-title", text: "Delete Content") }
+        click_on "Sure"
+        wait_until { page.has_css?("h2#swal2-title", text: "Deleted successfully!") }
+        click_on "OK"
 
-      wait_until { (page.all("div.portfolio-item").count == 3) }
+        wait_until { (page.all("div.portfolio-item").count == 3) }
+      end
     end
   end
 end
