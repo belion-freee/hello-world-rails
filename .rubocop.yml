@@ -1,7 +1,10 @@
 # target_version:
-#   rubocop v0.34.2
+#   rubocop v0.74.0
 #
 #   https://gist.github.com/onk/38bfbd78899d892e0e83
+
+require:
+  - rubocop-rails
 
 # 自動生成されるものはチェック対象から除外する
 AllCops:
@@ -62,7 +65,7 @@ Style/DoubleNegation:
 
 # メソッドチェーンの改行は末尾に . を入れる
 # REPL に貼り付けた際の暴発を防ぐため
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 # 明示的に else で nil を返すのは分かりやすいので許可する
@@ -70,7 +73,7 @@ Style/EmptyElse:
   EnforcedStyle: empty
 
 # 桁揃えが綺麗にならないことが多いので migration は除外
-Style/ExtraSpacing:
+Layout/ExtraSpacing:
   # Enabled: false
   AllowForAlignment: true
   Exclude:
@@ -98,14 +101,9 @@ Style/MultilineTernaryOperator:
 Style/IfUnlessModifier:
   Enabled: false
 
-# ({ と hash を開始した場合に ( の位置にインデントさせる
-# そもそも {} が必要ない可能性が高いが Style/BracesAroundHashParameters はチェックしないことにしたので
-Style/IndentHash:
-  EnforcedStyle: consistent
-
 # private/protected は一段深くインデントする
-Style/IndentationConsistency:
-  EnforcedStyle: rails
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
 
 # scope 等は複数行でも lambda ではなく ->{} で揃えた方が見た目が綺麗
 Style/Lambda:
@@ -119,7 +117,7 @@ Style/NumericLiterals:
   MinDigits: 7
 
 # has_ から始まるメソッドは許可する
-Style/PredicateName:
+Naming/PredicateName:
   NamePrefixBlacklist:
     - "is_"
     - "have_"
@@ -144,7 +142,7 @@ Style/SignalException:
   EnforcedStyle: only_raise
 
 # `||` も align に使うことがあるので追加する
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   AllowForAlignment: true
 
 # * 式展開したい場合に書き換えるのが面倒
@@ -169,7 +167,7 @@ Style/WordArray:
 # * model の association
 # * controller の callback
 # 辺りの桁揃えで引っかかるので全体的にチェックしない
-Style/SpaceBeforeFirstArg:
+Layout/SpaceBeforeFirstArg:
   Enabled: false
 
 # 複数行の場合はケツカンマを入れる
@@ -184,17 +182,17 @@ Style/ParallelAssignment:
   Enabled: false
 
 # Hashのkey, valueの位置合わせ
-Style/AlignHash:
+Layout/AlignHash:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
 
 # メソッド呼び出しの2行目以降のパラメータの
 # インデントを固定する
-Style/AlignParameters:
+Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
 # case式のwhenのインデントを一段下げる
-Style/CaseIndentation:
+Layout/CaseIndentation:
   EnforcedStyle: 'end'
   IndentOneStep: false
 
@@ -204,16 +202,16 @@ Style/SingleLineMethods:
 
 # ブロック呼び出しでメソッドと{の間のスペースを許可しない
 # specやformat.json { ... とかで桁合わせしたい場合もあるので無効
-Style/SpaceBeforeBlockBraces:
+Layout/SpaceBeforeBlockBraces:
   Enabled: false
   # EnforcedStyle: no_space
 
 # ブロック引数の前のスペースは不要
-Style/SpaceInsideBlockBraces:
+Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 
 # 文字列中の式展開でスペースをつける
-Style/SpaceInsideStringInterpolation:
+Layout/SpaceInsideStringInterpolation:
   # EnforcedStyle: space
   Enabled: false  # どちらでも許可する
 
@@ -224,11 +222,6 @@ Style/ClassAndModuleChildren:
 # each_with_objectは嫌いなのです
 Style/EachWithObject:
   Enabled: false
-
-# specでは == をmatcherで使うので
-Lint/Void:
-  Exclude:
-    - "spec/**/*_spec.rb"
 
 # FactroyGrilのDSLが壊れるので除外
 Style/SymbolProc:
