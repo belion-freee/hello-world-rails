@@ -42,7 +42,7 @@ cd <Project name>
 Only you need to execute initializing script.
 
 ```
-./qs init
+./qs init --webpack
 ```
 
 ## Hello World!!
