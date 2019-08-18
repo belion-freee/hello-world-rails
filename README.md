@@ -22,6 +22,7 @@ There are includeing such tool and function, liblary.
 - [Chart.js](https://www.chartjs.org/)
 - [Webmock](https://github.com/bblimke/webmock)
 - [Babaloa](https://github.com/belion-freee/babaloa)
+- [Bolo](https://github.com/belion-freee/bolo)
 
 ## Install Docker
 Please install Docker on your PC first.

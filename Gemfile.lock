@@ -48,6 +48,7 @@ GEM
     ast (2.4.0)
     babaloa (0.1.4)
     bindex (0.8.1)
+    bolo (0.1.0)
     bootsnap (1.4.4)
       msgpack (~> 1.0)
     builder (3.2.3)
@@ -242,6 +243,7 @@ PLATFORMS
 
 DEPENDENCIES
   babaloa (~> 0.1)
+  bolo (~> 0.1)
   bootsnap (>= 1.1.0)
   byebug
   capybara
