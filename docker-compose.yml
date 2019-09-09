@@ -28,6 +28,7 @@ services:
     environment:
       HOME: /app
       RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: webpacker
     ports:
       - "3000:3000"
     tty: true
@@ -43,6 +44,14 @@ services:
     command: bundle exec solargraph socket --host=0.0.0.0 --port=7658
     ports:
       - "8091:7658"
+    links: []
+  webpacker:
+    <<: *app
+    command: bin/webpack-dev-server
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    ports:
+      - "3035:3035"
     links: []
 
 volumes:
