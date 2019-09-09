@@ -46,6 +46,17 @@ Only you need to execute initializing script.
 ./qs init --webpack
 ```
 
+### webpack-dev-server
+If you wanna use webpack-dev-server, Plese add `webpacker` to links of web at docker-compose.yml
+
+```
+web: &app
+    links:
+      - db
+      - chrome
+      - webpacker # add this
+```
+
 ## Hello World!!
 Finally, please access `http://localhost:3000` as Rails is running.
 Enjoy your Rails!
