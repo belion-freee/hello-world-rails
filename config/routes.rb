@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root "hello_worlds#index"
 
   # devise
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: :omniauth }
 
   # CRUD page with RESTful
   resources :hello_worlds
