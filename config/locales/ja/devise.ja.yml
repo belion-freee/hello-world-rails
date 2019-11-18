@@ -106,6 +106,7 @@ ja:
       unlocked: アカウントを凍結解除しました。
   errors:
     messages:
+      record_invalid: "バリデーションに失敗しました: %{errors}"
       already_confirmed: は既に登録済みです。ログインしてください。
       confirmation_period_expired: の期限が切れました。%{period} までに確認する必要があります。 新しくリクエストしてください。
       expired: の有効期限が切れました。新しくリクエストしてください。
@@ -114,3 +115,24 @@ ja:
       not_saved:
         one: エラーが発生したため %{resource} は保存されませんでした。
         other: "%{count} 件のエラーが発生したため %{resource} は保存されませんでした。"
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              taken: "%{attribute}は既に使用されています。"
+              blank: "%{attribute}が入力されていません。"
+              too_short: "%{attribute}は%{count}文字以上に設定して下さい。"
+              too_long: "%{attribute}は%{count}文字以下に設定して下さい。"
+              invalid: "%{attribute}は有効でありません。"
+            password: &password
+              taken: "%{attribute}は既に使用されています。"
+              blank: "%{attribute}が入力されていません。"
+              too_short: "%{attribute}は%{count}文字以上に設定して下さい。"
+              too_long: "%{attribute}は%{count}文字以下に設定して下さい。"
+              invalid: "%{attribute}は有効でありません。"
+              confirmation: "%{attribute}が内容とあっていません。"
+            password_confirmation:
+              <<: *password
