@@ -34,3 +34,6 @@ HelloWorld.create(
     { country: "MY", hello: "Hai dunia", priority: 20, image: images("my.jpeg") },
   ]
 )
+
+# create root user
+User.create(email: "root@hello_world.com", password: "password", password_confirmation: "password")
